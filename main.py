@@ -5,6 +5,7 @@ from selenium.webdriver.common.keys import Keys
 from os import getcwd
 from time import sleep
 from baixar_music import baixar_musica, pesquisar_video
+from chatbot import chatbot
 import base64
 
 __Variaveis = {
@@ -18,10 +19,10 @@ nav = webdriver.Chrome()
 nav.get('https://web.whatsapp.com/')
 sleep(10)
 
-input('Enter')
+input('Enter depois de ler o QR Code')
 sleep(5)
 
-div_chats = nav.find_element(By.XPATH, '//*[@id="pane-side"]/div[2]/div/div')
+div_chats = nav.find_element(By.XPATH, '//*[@id="pane-side"]/div[2]/div/div')   
 chats = div_chats.find_elements(By.CLASS_NAME ,'_1Oe6M')
 
 def mandar_msg(msg=str):
@@ -84,12 +85,14 @@ def VarrerComandos(string=str, comandos=list):
 
 def ConversaComBot(string=str):
     if len(string) > 0:
-        if not string == '!bot':
-            string = string.split('!bot')
-            string = ''.join(string)
-            return True
+        if '!bot' in string:
+            if not string == '!bot':
+                string = string.split('!bot')
+                return ''.join(string).strip()
+            else:
+                mandar_msg('Digite algo após o comando..')
+                return False
         else:
-            mandar_msg('Digite algo após o comando..')
             return False
 
 def PegarImagem(string=str):
@@ -139,12 +142,16 @@ while True:
         elif PegarMusica(str(chats[c].find_element(By.CLASS_NAME, 'vQ0w7').text).lower()):
             chats[c].click()
             mandar_msg('Estamos iniciando o downlaod da sua música, aguarde 1 ou 2 minutos, por favor!')
-            music = str(chats[c].find_element(By.CLASS_NAME, 'vQ0w7').text).lower()
+            music = str(chats[c].find_element(By.CLASS_NAME, 'vQ0w7').text).lower().split('!musica')
             print(music)
-            baixar_musica(pesquisar_video(music))
-            sleep(30)
-            mandar_audio('music.mp3')
-            sleep(10)
+            #baixar_musica(pesquisar_video(music))
+            #sleep(30)
+            #mandar_audio('music.mp3')
+            #sleep(10)
+        elif ConversaComBot(str(chats[c].find_element(By.CLASS_NAME, 'vQ0w7').text).lower()):
+            chats[c].click()
+            mandar_msg(chatbot(str(chats[c].find_element(By.CLASS_NAME, 'vQ0w7').text).lower().split('!bot')))
+            sleep(5)
         elif VarrerComandos(str(chats[c].find_element(By.CLASS_NAME, 'vQ0w7').text).lower(), __Variaveis['Comandos']):
             if str(chats[c].find_element(By.CLASS_NAME, 'vQ0w7').text).lower() == "!comandos":
                 chats[c].click()
@@ -152,7 +159,7 @@ while True:
                 sleep(10)
             elif str(chats[c].find_element(By.CLASS_NAME, 'vQ0w7').text).lower() == "!ola":
                 chats[c].click()
-                mandar_msg('Olá, Pode me chamar de BOT, por enquanto não tenho um nome... Tenho 15dias de vida e gosto de computadores. É isso aí!')
+                mandar_msg('Olá, Pode me chamar de BOT, gosto de computadores. É isso aí!')
                 sleep(10)
             elif str(chats[c].find_element(By.CLASS_NAME, 'vQ0w7').text).lower() == "!travazap":
                 chats[c].click()
@@ -161,5 +168,4 @@ while True:
             elif str(chats[c].find_element(By.CLASS_NAME, 'vQ0w7').text).lower() == "!comofuifeito":
                 chats[c].click()
                 mandar_msg('Para mais informações sobre a minha construção acesse o github: github.com/Vajean1')
-                sleep(10)
-                
+                sleep(10)        
