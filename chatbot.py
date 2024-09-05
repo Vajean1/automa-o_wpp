@@ -3,7 +3,7 @@ import os
 import threading
 import json
 
-openai.api_key = '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'
+openai.api_key = 'enter_api_key'
 
 def chatbot(entrada: str):
     entrada_de_dados = str(entrada).strip()
